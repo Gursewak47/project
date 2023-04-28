@@ -4,6 +4,7 @@ namespace Modules\Shopify\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Symfony\Component\Finder\Finder;
 
 class ShopifyServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,7 @@ class ShopifyServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->registerCommands('\Modules\Shopify\Console');
     }
 
     /**
@@ -51,7 +53,8 @@ class ShopifyServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 
@@ -110,5 +113,24 @@ class ShopifyServiceProvider extends ServiceProvider
             }
         }
         return $paths;
+    }
+    public function registerCommands($namespace = '')
+    {
+        $classes = [];
+
+        foreach ([0, 1, 2, 3] as $key => $value) {
+            $finder = Finder::create()
+                        ->in(__DIR__.'/../Console')
+                        ->depth(2)
+                        ->name(['*.json', '*.php'])
+                        ->sortByName();
+
+            foreach ($finder as $file) {
+                $class     = $namespace.'\\'.str_replace('/', '\\', $file->getRelativePath()).'\\'.$file->getBasename('.php');
+                $classes[] = $class;
+            }
+        }
+
+        $this->commands($classes);
     }
 }
