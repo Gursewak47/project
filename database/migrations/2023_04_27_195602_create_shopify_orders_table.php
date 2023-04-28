@@ -13,6 +13,7 @@ return new class () extends Migration {
         Schema::create('shopify_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->jsonb('metadata')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
