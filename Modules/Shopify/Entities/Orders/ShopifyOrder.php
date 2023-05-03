@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Shopify\Entities;
+namespace Modules\Shopify\Entities\Orders;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
