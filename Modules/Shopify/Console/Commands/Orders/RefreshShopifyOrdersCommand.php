@@ -2,6 +2,16 @@
 
 namespace Modules\Shopify\Console\Commands\Orders;
 
-class RefreshShopifyOrdersCommand
+use Illuminate\Console\Command;
+
+class RefreshShopifyOrdersCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $name = 'orders:refresh-shopify';
+
+    // Command implementation...
 }
