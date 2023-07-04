@@ -1,30 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Traits\HandlesInertiaAndApiRequests;
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(private UserRepository $userRepository)
     {
-        $user= User::where('email', $request->email)->first();
-        // print_r($data);
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response([
-                'message' => ['These credentials do not match our records.']
-            ], 404);
-        }
+    }
 
-        $token = $user->createToken('my-app-token')->plainTextToken;
+    public function index()
+    {
+        // return Inertia::render('Tenant/MyProfile');
+    }
 
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
+    public function update(UpdateUserRequest $request)
+    {
+        $this->userRepository->updateUser(auth()->user(), $request->validated());
 
-        return response($response, 201);
+        return Redirect::route('dashboard.index');
     }
 }
